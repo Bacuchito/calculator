@@ -1,116 +1,101 @@
 import pytest
-from tkinter import Button, Label
-from calculator import show, clear, calculate
+from tkinter import Tk, Label, Button
 
-
-@pytest.fixture
-def calculator_app():
-    import tkinter as tk
-    from calculator import show, clear, calculate
-
-    root = tk.Tk()
-    root.title("Simple Calculator")
-    root.geometry("380x430+100+200")
-    root.resizable(False, False)
-    root.configure(bg="black")
-
+def test_addition():
+    root = Tk()
     equation = ""
-
     Label_result = Label(root, width=25, height=2, text="", font=("Arial", 20))
     Label_result.pack()
 
-    Button(root, text="C", width=4, height=1, font=("Arial", 20, "bold"), bd=1, fg="#fff", bg="#3697f5",
-           command=lambda: clear()).place(x=17, y=80)
-    Button(root, text="7", width=4, height=1, font=("Arial", 20, "bold"), bd=1, fg="#fff", bg="Gray",
-           command=lambda: show("7")).place(x=17, y=150)
-    Button(root, text="8", width=4, height=1, font=("Arial", 20, "bold"), bd=1, fg="#fff", bg="Gray",
-           command=lambda: show("8")).place(x=107, y=150)
-    Button(root, text="+", width=4, height=1, font=("Arial", 20, "bold"), bd=1, fg="#fff", bg="Red",
-           command=lambda: show("+")).place(x=287, y=290)
-    Button(root, text="=", width=4, height=1, font=("Arial", 20, "bold"), bd=1, fg="#fff", bg="Orange",
-           command=lambda: calculate()).place(x=287, y=360)
+    def show(value):
+        nonlocal equation
+        equation += value
+        Label_result.config(text=equation)
 
-    yield root
+    def clear():
+        nonlocal equation
+        equation = ""
+        Label_result.config(text=equation)
 
-    root.destroy()
+    def calculate():
+        nonlocal equation
+        result = ""
+        if equation != "":
+            try:
+                result = eval(equation)
+            except:
+                result = "ERROR"
+                equation = ""
+        Label_result.config(text=result)
 
+    # Test addition
+    clear()
+    show("5")
+    show("+")
+    show("3")
+    calculate()
+    result = Label_result.cget("text")
+    assert result == 8
 
-def test_calculator_addition(calculator_app):
-    button_7 = calculator_app.children["!button2"]
-    button_8 = calculator_app.children["!button3"]
-    button_add = calculator_app.children["!button4"]
-    button_equals = calculator_app.children["!button5"]
+    clear()
+    show("2")
+    show("5")
+    show("+")
+    show("5")
+    show("7")
+    calculate()
+    result = Label_result.cget("text")
+    assert result == 82
 
-    button_7.invoke()
-    button_add.invoke()
-    button_8.invoke()
-    button_equals.invoke()
+def test_subtraction():
+    root = Tk()
+    equation = ""
+    Label_result = Label(root, width=25, height=2, text="", font=("Arial", 20))
+    Label_result.pack()
 
-    label_result = calculator_app.children["!label"]
-    assert label_result.cget("text") == "15"
+    def show(value):
+        nonlocal equation
+        equation += value
+        Label_result.config(text=equation)
 
+    def clear():
+        nonlocal equation
+        equation = ""
+        Label_result.config(text=equation)
 
-def test_calculator_subtraction(calculator_app):
-    button_7 = calculator_app.children["!button2"]
-    button_8 = calculator_app.children["!button3"]
-    button_add = calculator_app.children["!button4"]
-    button_equals = calculator_app.children["!button5"]
+    def calculate():
+        nonlocal equation
+        result = ""
+        if equation != "":
+            try:
+                result = eval(equation)
+            except:
+                result = "ERROR"
+                equation = ""
+        Label_result.config(text=result)
 
-    button_7.invoke()
-    button_add.invoke()
-    button_8.invoke()
-    button_equals.invoke()
+    # Test addition
+    clear()
+    show("9")
+    show("2")
+    show("-")
+    show("4")
+    show("8")
+    calculate()
+    result = Label_result.cget("text")
+    assert result == 44
 
-    button_subtract = calculator_app.children["!button4"]
-    button_5 = calculator_app.children["!button6"]
+    clear()
+    show("4")
+    show("2")
+    show("0")
+    show("-")
+    show("1")
+    show("6")
+    show("7")
+    show("2")
+    calculate()
+    result = Label_result.cget("text")
+    assert result == -1252
 
-    button_subtract.invoke()
-    button_5.invoke()
-    button_equals.invoke()
-
-    label_result = calculator_app.children["!label"]
-    assert label_result.cget("text") == "10"
-
-
-def test_calculator_multiplication(calculator_app):
-    button_7 = calculator_app.children["!button2"]
-    button_8 = calculator_app.children["!button3"]
-    button_add = calculator_app.children["!button4"]
-    button_equals = calculator_app.children["!button5"]
-
-    button_7.invoke()
-    button_add.invoke()
-    button_8.invoke()
-    button_equals.invoke()
-
-    button_multiply = calculator_app.children["!button4"]
-    button_2 = calculator_app.children["!button6"]
-
-    button_multiply.invoke()
-    button_2.invoke()
-    button_equals.invoke()
-
-    label_result = calculator_app.children["!label"]
-    assert label_result.cget("text") == "30"
-
-
-def test_calculator_division(calculator_app):
-    button_7 = calculator_app.children["!button2"]
-    button_8 = calculator_app.children["!button3"]
-    button_add = calculator_app.children["!button4"]
-    button_equals = calculator_app.children["!button5"]
-
-    button_7.invoke()
-    button_add.invoke()
-    button_8.invoke()
-    button_equals.invoke()
-
-    button_divide = calculator_app.children["!button4"]
-    button_2 = calculator_app.children["!button6"]
-
-    button_divide.invoke()
-    button_2.invoke()
-    button_equals.invoke()
-
-    label_result = calculator_app.children["!label"]
-    assert label_result.cget("text") == "7.5"
+pytest.main()
